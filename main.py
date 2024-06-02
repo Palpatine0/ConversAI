@@ -25,11 +25,12 @@ def main():
 
     llm = ChatOpenAI(temperature = 1)
 
-    # Create a list to hold the messages
-    messages = [
-        # Starting with a system message to set the context
-        SystemMessage(content = "You are a helpful assistant."),
-    ]
+    if "messages" not in st.session_state:
+        # Create a list to hold the messages
+        st.session_state.messages = [
+            # Starting with a system message to set the context
+            SystemMessage(content = "You are a helpful assistant."),
+        ]
 
     st.header("Your own ChatGPT")
 
@@ -40,9 +41,9 @@ def main():
         # Display the user message in the chat interface
         message(user_input, is_user = True)
         # Append the user's message to the conversation history
-        messages.append(HumanMessage(content = user_input))
+        st.session_state.messages.append(HumanMessage(content = user_input))
         # Get the model's response based on the conversation history
-        response = llm(messages)
+        response = llm(st.session_state.messages)
         # Display the model's response in the chat interface
         message(response.content, is_user = False)
 
