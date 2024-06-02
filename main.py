@@ -36,16 +36,22 @@ def main():
 
     with st.sidebar:
         user_input = st.text_input("Your message: ", key = "user_input")
+        if user_input:
+            # Append the user's message to the conversation history
+            st.session_state.messages.append(HumanMessage(content = user_input))
+            with st.spinner("Thinking..."):
+                # Get the model's response based on the conversation history
+                response = llm(st.session_state.messages)
+            # Append the AI's response to the conversation history
+            st.session_state.messages.append(AIMessage(content = response.content))
 
-    if user_input:
-        # Display the user message in the chat interface
-        message(user_input, is_user = True)
-        # Append the user's message to the conversation history
-        st.session_state.messages.append(HumanMessage(content = user_input))
-        # Get the model's response based on the conversation history
-        response = llm(st.session_state.messages)
-        # Display the model's response in the chat interface
-        message(response.content, is_user = False)
+    # Retrieve the messages from the session state and iterate over the messages starting from the second one to skip the sys msg
+    messages = st.session_state.get('messages', [])
+    for i, msg in enumerate(messages[1:]):
+        if i % 2 == 0:
+            message(msg.content, is_user = True, key = str(i) + '_user')
+        else:
+            message(msg.content, is_user = False, key = str(i) + '_ai')
 
 
 if __name__ == "__main__":
