@@ -8,3 +8,6 @@ st.set_page_config(
 )
 
 st.header("Your own ChatGPT")
+
+with st.sidebar:
+    user_input = st.text_input("Your message: ", key = "user_input")
